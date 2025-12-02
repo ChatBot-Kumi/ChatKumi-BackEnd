@@ -7,23 +7,26 @@ import org.springframework.stereotype.Service;
 @Service
 
 public class Chatbot { 
-    private List<Modalidade> infantil;
+    //atributos
+    private List<Modalidade> infantil; 
     private List<Modalidade> adulto;
     private List<Duvida> duvidas;
 
+    //usado para controlar em qual parte da conversa o usuário está
     private enum Estado { MENU_PRINCIPAL, AULAS_INFANTIL, AULAS_ADULTO, DUVIDAS }
     private Estado estadoAtual;
 
     public Chatbot() {
-        this.infantil = DadosAcademia.carregarModalidadesInfantil();
+        this.infantil = DadosAcademia.carregarModalidadesInfantil(); //inicializa as listas 
         this.adulto = DadosAcademia.carregarModalidadesAdulto();
         this.duvidas = DadosAcademia.carregarDuvidasFrequentes();
-        this.estadoAtual = Estado.MENU_PRINCIPAL;
+        this.estadoAtual = Estado.MENU_PRINCIPAL; //define que o chat começa no menu principal 
     }
     
-    public String processarMensagem(String mensagem) {
-        String msgLower = mensagem.toLowerCase().trim();
-        
+    public String processarMensagem(String mensagem) { // recebe o texto do usuário e devolve a resposta.
+        String msgLower = mensagem.toLowerCase().trim(); //  para evitar erros de digitação ou variações de maiúsculas/minúsculas.
+
+        //tratamento de mensagens 
         if (msgLower.equals("sair") || msgLower.equals("tchau") || msgLower.contains("obrigado")) {
             return "Agradecemos o seu contato e esperamos te ver em breve! Tchau! 👋" ;
             
@@ -43,6 +46,7 @@ public class Chatbot {
             return getMenuPrincipal();
         }
 
+        // leva a um método 
         switch (estadoAtual) {
             case MENU_PRINCIPAL:
                 return processarMenuPrincipal(msgLower);
@@ -90,14 +94,14 @@ public class Chatbot {
         return "Opção inválida. Digite 'Kids', 'Adulto', 'Duvidas' ou 'Voltar'.";
     }
 
-    private String processarAulas(String msg, List<Modalidade> lista, String titulo) {
+    /*private String processarAulas(String msg, List<Modalidade> lista, String titulo) {
         for (Modalidade mod : lista) {
             if (msg.contains(mod.getNome().toLowerCase().split(" ")[0])) {
                 return formatarInformacoesModalidade(mod, titulo);
             }
         }
         
-        return "Modalidade não encontrada no menu " + titulo + ". Digite o nome correto ou 'Voltar'.";
+        return "Modalidade não encontrada no menu " + titulo + ". Digite o nome correto ou 'Voltar'.";*/
     }
 
     private String processarDuvidas(String msg) {
