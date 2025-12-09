@@ -4,24 +4,20 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.TemporalAdjusters;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Datas {
 
-	
-    private static List<String> calcularProximasAulas(DayOfWeek dia) {
-        List<String> datas = new ArrayList<>();
+    private static String[] calcularProximasAulas(DayOfWeek dia) {
+        String[] datas = new String[4];
         LocalDate hoje = LocalDate.now();
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         LocalDate proximo = hoje.with(TemporalAdjusters.nextOrSame(dia));
         for (int i = 0; i < 4; i++) {
-            datas.add(proximo.plusWeeks(i).format(fmt));
+            datas[i] = proximo.plusWeeks(i).format(fmt);
         }
         return datas;
     }
-    
 
     private static DayOfWeek traduzDiaSemana(String nome) {
         return switch (nome.toLowerCase()) {

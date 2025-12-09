@@ -1,17 +1,15 @@
 package com.example.demo;
 
-import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.util.stream.Collectors;
 import org.springframework.stereotype.Service; 
 
 @Service
 public class Chatbot { 
     //atributos
-    private List<Modalidade> infantil;
-    private List<Modalidade> adulto;
-    private List<Duvida> duvidas;
+    private Modalidade[] infantil;
+    private Modalidade[] adulto;
+    private Duvida[] duvidas;
     private Agendamento agendamentoService;
  
     //usado para controlar em qual parte da conversa o usuário está
@@ -97,15 +95,21 @@ public class Chatbot {
     private String processarMenuPrincipal(String msg) {
         if (msg.contains("Criança") || msg.contains("1") || msg.contains("Kids")) {
             estadoAtual = Estado.AULAS_INFANTIL;
-            return "Entendido! Menu Aulas Infantis.\nModalidades disponíveis: " + 
-                    infantil.stream().map(Modalidade::getNome).collect(Collectors.joining(", ")) + 
-                    ".\nDigite o nome da modalidade ou 'Voltar'.";
+            StringBuilder nomesInf = new StringBuilder();
+            for (int i = 0; i < infantil.length; i++) {
+                if (i > 0) nomesInf.append(", ");
+                nomesInf.append(infantil[i].getNome());
+            }
+            return "Entendido! Menu Aulas Infantis.\nModalidades disponíveis: " + nomesInf.toString() + ".\nDigite o nome da modalidade ou 'Voltar'.";
         }
         if (msg.contains("Adulto") || msg.contains("2")) {
             estadoAtual = Estado.AULAS_ADULTO;
-            return "Entendido! Menu Aulas Adulto.\nModalidades disponíveis: " + 
-                    adulto.stream().map(Modalidade::getNome).collect(Collectors.joining(", ")) + 
-                    ".\nDigite o nome da modalidade ou 'Voltar'.";
+            StringBuilder nomesAd = new StringBuilder();
+            for (int i = 0; i < adulto.length; i++) {
+                if (i > 0) nomesAd.append(", ");
+                nomesAd.append(adulto[i].getNome());
+            }
+            return "Entendido! Menu Aulas Adulto.\nModalidades disponíveis: " + nomesAd.toString() + ".\nDigite o nome da modalidade ou 'Voltar'.";
         }
         if (msg.contains("Dúvidas") || msg.contains("3") || msg.contains("Frequentes")) {
             estadoAtual = Estado.DUVIDAS;
@@ -222,7 +226,7 @@ public class Chatbot {
         return resposta;
     }
 
-    private String processarAulas(String msg, List<Modalidade> lista, String titulo) {
+    private String processarAulas(String msg, Modalidade[] lista, String titulo) {
         for (Modalidade mod : lista) {
             if (msg.contains(mod.getNome().toLowerCase().split(" ")[0])) {
                 return formatarInformacoesModalidade(mod, titulo);
