@@ -1,9 +1,5 @@
 package com.example.demo;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 public class ModalidadeAgendamento {
     private String nome;
     private int idadeMinima;
@@ -19,28 +15,32 @@ public class ModalidadeAgendamento {
     public int getIdadeMinima() { return idadeMinima; }
     public int getIdadeMaxima() { return idadeMaxima; }
 
-    public static List<ModalidadeAgendamento> getTodasModalidades() {
-        return Arrays.asList(
+    public static ModalidadeAgendamento[] getTodasModalidades() {
+        return new ModalidadeAgendamento[] {
             new ModalidadeAgendamento("Karatê Shotokan", 5, 99),
             new ModalidadeAgendamento("Taekwondo", 6, 99),
             new ModalidadeAgendamento("Jiu Jitsu", 12, 99),
             new ModalidadeAgendamento("Ginástica 50+", 50, 99),
             new ModalidadeAgendamento("Ginástica Artística", 5, 12)
-        );
+        };
     }
 
-    public static List<String> getNomesModalidades() {
-        return getTodasModalidades().stream()
-            .map(ModalidadeAgendamento::getNome)
-            .collect(Collectors.toList());
+    public static String[] getNomesModalidades() {
+        ModalidadeAgendamento[] modalidades = getTodasModalidades();
+        String[] nomes = new String[modalidades.length];
+        for (int i = 0; i < modalidades.length; i++) {
+            nomes[i] = modalidades[i].getNome();
+        }
+        return nomes;
     }
 
     public static ModalidadeAgendamento getModalidadePorNome(String nome) {
         try {
-            return getTodasModalidades().stream()
-                .filter(modalidade -> modalidade.getNome().equalsIgnoreCase(nome))
-                .findFirst()
-                .orElseThrow(() -> new IllegalArgumentException("Modalidade não encontrada: " + nome));
+            ModalidadeAgendamento[] modalidades = getTodasModalidades();
+            for (ModalidadeAgendamento m : modalidades) {
+                if (m.getNome().equalsIgnoreCase(nome)) return m;
+            }
+            throw new IllegalArgumentException("Modalidade não encontrada: " + nome);
         } catch (IllegalArgumentException iae) {
             throw iae;
         } catch (Exception e) {

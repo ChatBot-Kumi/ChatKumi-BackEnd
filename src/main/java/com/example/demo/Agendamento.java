@@ -1,11 +1,7 @@
 package com.example.demo; 
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class Agendamento {
     
@@ -43,7 +39,7 @@ public class Agendamento {
         }
     }
 
-    private final List<AgendamentoExperimental> agendamentosConcluidos = new ArrayList<>(); 
+    private AgendamentoExperimental[] agendamentosConcluidos = new AgendamentoExperimental[0]; 
 
 
     public ResultadoAgendamento coletarNome(String nome) {
@@ -73,8 +69,8 @@ public class Agendamento {
             dados.put("nome", nomeAluno);
             dados.put("idade", idade);
 
-            String listaModalidades = ModalidadeAgendamento.getNomesModalidades().stream()
-                .collect(Collectors.joining(", "));
+            String[] nomes = ModalidadeAgendamento.getNomesModalidades();
+            String listaModalidades = String.join(", ", nomes);
 
             return new ResultadoAgendamento(true, 
                 "2. Idade validada (" + idade + " anos).\n3 - Para qual aula " + nomeAluno + " gostaria de agendar a experimental?\n" +
@@ -108,14 +104,14 @@ public class Agendamento {
             dados.put("idade", idade);
             dados.put("modalidade", modalidadeObj.getNome());
             
-            List<TurmaAgendamento> turmasCompativeis = TurmaAgendamento.getTurmasCompativeis(modalidadeObj.getNome(), idade);
-            
-            if (turmasCompativeis.isEmpty()) {
-                 throw new IllegalArgumentException("Não encontramos nenhuma turma disponível para a modalidade " + modalidadeObj.getNome() + " e idade " + idade + ".");
-            }
-            
-            if (turmasCompativeis.size() == 1) { 
-                TurmaAgendamento turmaUnica = turmasCompativeis.get(0);
+              TurmaAgendamento[] turmasCompativeis = TurmaAgendamento.getTurmasCompativeis(modalidadeObj.getNome(), idade);
+
+              if (turmasCompativeis.length == 0) {
+                  throw new IllegalArgumentException("Não encontramos nenhuma turma disponível para a modalidade " + modalidadeObj.getNome() + " e idade " + idade + ".");
+              }
+
+              if (turmasCompativeis.length == 1) { 
+                 TurmaAgendamento turmaUnica = turmasCompativeis[0];
                 dados.put("turma", turmaUnica);
                 
                 ResultadoAgendamento resDatas = listarDatasDisponiveis(turmaUnica.getDias());
@@ -132,10 +128,10 @@ public class Agendamento {
                 
                 StringBuilder sb = new StringBuilder();
                 sb.append("3. Modalidade **").append(modalidadeObj.getNome()).append("** selecionada. \n4 - Para qual turma? (Compatível com ").append(idade).append(" anos)");
-                
-                for (int i = 0; i < turmasCompativeis.size(); i++) {
-                    TurmaAgendamento t = turmasCompativeis.get(i);
-                    sb.append("\n").append(i + 1).append(". ").append(t.getDias()).append(" às ").append(t.getHorario());
+
+                for (int i = 0; i < turmasCompativeis.length; i++) {
+                    TurmaAgendamento turma = turmasCompativeis[i];
+                    sb.append("\n").append(i + 1).append(". ").append(turma.getDias()).append(" às ").append(turma.getHorario());
                 }
                 
                 return new ResultadoAgendamento(true, sb.toString(), dados);
@@ -145,9 +141,9 @@ public class Agendamento {
             Map<String, Object> dados = new HashMap<>();
             dados.put("nome", nomeAluno);
             dados.put("idade", idade);
-            String listaModalidades = ModalidadeAgendamento.getNomesModalidades().stream()
-                .collect(Collectors.joining(", "));
-                
+            String[] nomes = ModalidadeAgendamento.getNomesModalidades();
+            String listaModalidades = String.join(", ", nomes);
+            
             return new ResultadoAgendamento(false, 
                 e.getMessage() + 
                 "\n3 - Por favor, digite o nome da modalidade novamente. Opções: " + listaModalidades + ".", 
@@ -162,13 +158,13 @@ public class Agendamento {
         try {
             int indiceTurma = Integer.parseInt(indiceTurmaStr.trim()) - 1;
             
-            List<TurmaAgendamento> turmasCompativeis = TurmaAgendamento.getTurmasCompativeis(modalidade, idade);
-            
-            if (indiceTurma < 0 || indiceTurma >= turmasCompativeis.size()) {
+            TurmaAgendamento[] turmasCompativeis = TurmaAgendamento.getTurmasCompativeis(modalidade, idade);
+
+            if (indiceTurma < 0 || indiceTurma >= turmasCompativeis.length) {
                 throw new IllegalArgumentException("Número de turma inválido.");
             }
-            
-            TurmaAgendamento turmaSelecionada = turmasCompativeis.get(indiceTurma);
+
+            TurmaAgendamento turmaSelecionada = turmasCompativeis[indiceTurma];
             
             Map<String, Object> dados = new HashMap<>();
             dados.put("nome", nomeAluno);
@@ -189,12 +185,12 @@ public class Agendamento {
                 "Por favor, digite apenas o **número** da turma desejada.", 
                 new HashMap<>());
         } catch (IllegalArgumentException e) {
-            List<TurmaAgendamento> turmasCompativeis = TurmaAgendamento.getTurmasCompativeis(modalidade, idade);
+            TurmaAgendamento[] turmasCompativeis = TurmaAgendamento.getTurmasCompativeis(modalidade, idade);
             StringBuilder sb = new StringBuilder();
             sb.append(e.getMessage()).append("\n4 - Escolha um número válido das opções:");
-            for (int i = 0; i < turmasCompativeis.size(); i++) {
-                TurmaAgendamento t = turmasCompativeis.get(i);
-                sb.append("\n").append(i + 1).append(". ").append(t.getDias()).append(" às ").append(t.getHorario());
+            for (int i = 0; i < turmasCompativeis.length; i++) {
+                TurmaAgendamento turma = turmasCompativeis[i];
+                sb.append("\n").append(i + 1).append(". ").append(turma.getDias()).append(" às ").append(turma.getHorario());
             }
 
             Map<String, Object> dados = new HashMap<>();
@@ -224,7 +220,7 @@ public class Agendamento {
             String dataSelecionada = proximasDatas[indiceData];
 
             AgendamentoExperimental agendamento = new AgendamentoExperimental(nomeAluno, idade, modalidade, turma, dataSelecionada);
-            agendamentosConcluidos.add(agendamento);
+            adicionarAgendamento(agendamento);
 
             String mensagemConfirmacao = String.format(
                 "6 - SUA AULA EXPERIMENTAL FOI MARCADA!\n" +
@@ -286,7 +282,7 @@ public class Agendamento {
             }
 
             Map<String, Object> dados = new HashMap<>();
-            dados.put("datas", Arrays.asList(proximasDatas));
+            dados.put("datas", proximasDatas);
 
             return new ResultadoAgendamento(true, sb.toString(), dados);
             
@@ -327,5 +323,12 @@ public class Agendamento {
         if (dias.contains("Sexta")) return "sexta";
         if (dias.contains("Sábado") || dias.contains("Sabado")) return "sábado";
         throw new IllegalArgumentException("Dia da semana não reconhecido: " + dias);
+    }
+
+    private void adicionarAgendamento(AgendamentoExperimental ag) {
+        AgendamentoExperimental[] novo = new AgendamentoExperimental[agendamentosConcluidos.length + 1];
+        System.arraycopy(agendamentosConcluidos, 0, novo, 0, agendamentosConcluidos.length);
+        novo[novo.length - 1] = ag;
+        agendamentosConcluidos = novo;
     }
 }

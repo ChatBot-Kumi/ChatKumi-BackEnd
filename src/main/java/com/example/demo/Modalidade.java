@@ -1,13 +1,11 @@
 package com.example.demo;
 
-import java.util.List;
-
 public class Modalidade {
     private String nome;
     private String descricaoGeral;
-    private List<Turma> turmas;
+    private Turma[] turmas;
 
-    public Modalidade(String nome, String descricaoGeral, List<Turma> turmas) {
+    public Modalidade(String nome, String descricaoGeral, Turma[] turmas) {
         this.nome = nome;
         this.descricaoGeral = descricaoGeral;
         this.turmas = turmas;
@@ -21,7 +19,7 @@ public class Modalidade {
         return descricaoGeral; 
     }
 
-    public List<Turma> getTurmas() { 
+    public Turma[] getTurmas() { 
         return turmas; 
     }
 }

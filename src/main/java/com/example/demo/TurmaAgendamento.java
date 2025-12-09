@@ -1,8 +1,6 @@
 package com.example.demo;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
+// using arrays for beginner-friendly implementation
 
 public class TurmaAgendamento {
     private String nome;
@@ -33,35 +31,47 @@ public class TurmaAgendamento {
         return dias + " - " + horario;
     }
 
-    public static List<TurmaAgendamento> getTodasTurmas() {
-        return Arrays.asList(
+    public static TurmaAgendamento[] getTodasTurmas() {
+        TurmaAgendamento[] todas = new TurmaAgendamento[] {
             new TurmaAgendamento("Karatê Kids Sábado 9h", "Sábado", "9h - 11h", "Karatê Shotokan", 5, 99),
             new TurmaAgendamento("Karatê Kids Seg/Qua 18h30", "Segunda e Quarta", "18h30 - 19h30", "Karatê Shotokan", 5, 99),
             new TurmaAgendamento("Karatê Adulto Seg/Qua 20h", "Segunda e Quarta", "20h - 21h", "Karatê Shotokan", 13, 99),
             new TurmaAgendamento("Karatê Geral Ter/Qui 19h30", "Terça e Quinta", "19h30 - 20h30", "Karatê Shotokan", 5, 99),
-            
+
             new TurmaAgendamento("Taekwondo Kids Ter/Qui 18h30", "Terça e Quinta", "18h30 - 19h30", "Taekwondo", 6, 12),
             new TurmaAgendamento("Taekwondo Adulto Ter/Qui 19h30", "Terça e Quinta", "19h30 - 20h30", "Taekwondo", 13, 99),
 
             new TurmaAgendamento("Jiu Jitsu Geral Ter/Qui 19h30", "Terça e Quinta", "19h30 - 20h30", "Jiu Jitsu", 12, 99),
-            
+
             new TurmaAgendamento("Ginástica 50+ Matinal", "Segunda, Quarta e Sexta", "08h30 - 09h30", "Ginástica 50+", 50, 99),
-            
+
             new TurmaAgendamento("Ginástica Artística 5-8 anos", "Segunda e Quarta", "18h30 - 19h30", "Ginástica Artística", 5, 8),
             new TurmaAgendamento("Ginástica Artística 9-12 anos", "Segunda e Quarta", "19h30 - 20h30", "Ginástica Artística", 9, 12)
-        );
+        };
+        return todas;
     }
 
-    public static List<TurmaAgendamento> getTurmasPorModalidade(String modalidade) {
+    public static TurmaAgendamento[] getTurmasPorModalidade(String modalidade) {
         try {
-            List<TurmaAgendamento> turmasFiltradas = getTodasTurmas().stream()
-                .filter(t -> t.getModalidade().equalsIgnoreCase(modalidade))
-                .collect(Collectors.toList());
-
-            if (turmasFiltradas.isEmpty()) {
+            TurmaAgendamento[] todas = getTodasTurmas();
+            // primeiro conta quantas correspondem
+            int count = 0;
+            for (int i = 0; i < todas.length; i++) {
+                if (todas[i].getModalidade().equalsIgnoreCase(modalidade)) {
+                    count++;
+                }
+            }
+            if (count == 0) {
                 throw new IllegalArgumentException("Nenhuma turma encontrada para: " + modalidade);
             }
-            return turmasFiltradas;
+            TurmaAgendamento[] filtradas = new TurmaAgendamento[count];
+            int idx = 0;
+            for (int i = 0; i < todas.length; i++) {
+                if (todas[i].getModalidade().equalsIgnoreCase(modalidade)) {
+                    filtradas[idx++] = todas[i];
+                }
+            }
+            return filtradas;
         } catch (IllegalArgumentException iae) {
             throw iae;
         } catch (Exception e) {
@@ -69,11 +79,25 @@ public class TurmaAgendamento {
         }
     }
 
-    public static List<TurmaAgendamento> getTurmasCompativeis(String modalidade, int idade) {
+    public static TurmaAgendamento[] getTurmasCompativeis(String modalidade, int idade) {
         try {
-            return getTurmasPorModalidade(modalidade).stream()
-                .filter(turma -> idade >= turma.getIdadeMinima() && idade <= turma.getIdadeMaxima())
-                .collect(Collectors.toList());
+            TurmaAgendamento[] porModalidade = getTurmasPorModalidade(modalidade);
+            int count = 0;
+            for (int i = 0; i < porModalidade.length; i++) {
+                TurmaAgendamento turma = porModalidade[i];
+                if (idade >= turma.getIdadeMinima() && idade <= turma.getIdadeMaxima()) {
+                    count++;
+                }
+            }
+            TurmaAgendamento[] compat = new TurmaAgendamento[count];
+            int idx = 0;
+            for (int i = 0; i < porModalidade.length; i++) {
+                TurmaAgendamento turma = porModalidade[i];
+                if (idade >= turma.getIdadeMinima() && idade <= turma.getIdadeMaxima()) {
+                    compat[idx++] = turma;
+                }
+            }
+            return compat;
         } catch (IllegalArgumentException iae) {
             throw iae;
         } catch (Exception e) {
@@ -82,14 +106,14 @@ public class TurmaAgendamento {
     }
 
     public static boolean existeTurmaUnica(String modalidade) {
-        return getTurmasPorModalidade(modalidade).size() <= 1; 
+        return getTurmasPorModalidade(modalidade).length <= 1;
     }
 
     public static TurmaAgendamento getTurmaUnica(String modalidade) {
-        List<TurmaAgendamento> turmas = getTurmasPorModalidade(modalidade);
-        if (turmas.size() != 1) {
+        TurmaAgendamento[] turmas = getTurmasPorModalidade(modalidade);
+        if (turmas.length != 1) {
             throw new IllegalArgumentException("Modalidade não possui uma única turma: " + modalidade);
         }
-        return turmas.get(0);
+        return turmas[0];
     }
 }
