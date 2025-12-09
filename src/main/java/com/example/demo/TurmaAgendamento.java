@@ -1,6 +1,7 @@
 package com.example.demo;
 
-// using arrays for beginner-friendly implementation
+// Arquivo que representa uma turma para agendamento
+
 
 public class TurmaAgendamento {
     private String nome;

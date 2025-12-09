@@ -1,5 +1,7 @@
 package com.example.demo;
 
+// Arquivo que representa uma modalidade para agendamento
+
 public class ModalidadeAgendamento {
     private String nome;
     private int idadeMinima;

@@ -1,8 +1,13 @@
+
+//Arquivo que contém a lógica principal do chatbot
+
 package com.example.demo;
 
 import java.util.Map;
 import java.util.HashMap;
 import org.springframework.stereotype.Service; 
+
+
 
 @Service
 public class Chatbot { 

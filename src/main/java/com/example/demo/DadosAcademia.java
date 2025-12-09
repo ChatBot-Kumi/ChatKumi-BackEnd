@@ -1,5 +1,8 @@
 package com.example.demo;
 
+// Arquivo com as modalidades e dúvidas frequentes da academia
+
+
 public class DadosAcademia {
 
     public static Modalidade[] carregarModalidadesInfantil() {
