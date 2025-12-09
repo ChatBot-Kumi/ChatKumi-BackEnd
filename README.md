@@ -133,29 +133,6 @@ Bot: 3. Modalidade **KARATÊ** selecionada.
      ...
 ```
 
-## 🔄 Fluxo de Estados
-
-O chatbot utiliza uma máquina de estados para gerenciar a conversa:
-
-```
-MENU_PRINCIPAL
-    ↓
-[Kids] → AULAS_INFANTIL → consulta modalidades
-[Adulto] → AULAS_ADULTO → consulta modalidades
-[Dúvidas] → DUVIDAS → consulta FAQ
-[Agendar] → AGENDAMENTO_COLETANDO_NOME
-    ↓
-AGENDAMENTO_COLETANDO_IDADE
-    ↓
-AGENDAMENTO_SELECIONANDO_MODALIDADE
-    ↓
-AGENDAMENTO_SELECIONANDO_TURMA (ou direto para DATA se única turma)
-    ↓
-AGENDAMENTO_SELECIONANDO_DATA
-    ↓
-AGENDAMENTO_FINALIZADO → MENU_PRINCIPAL
-```
-
 ## 👥 Contribuidores
 
 - [ChatBot-Kumi](https://github.com/ChatBot-Kumi)
